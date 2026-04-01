@@ -4,8 +4,7 @@ import { bootstrapFirebaseServices } from '../lib/firebase';
 
 const STORAGE_KEY = 'valorant-react-site-state-v2';
 const FIREBASE_STATE_PATH = 'siteStateV2';
-
-
+const PRESENCE_SESSION_KEY = 'valorant-react-site-presence-id';
 
 function buildDefaultState() {
   return {
@@ -108,6 +107,25 @@ function readInitialState() {
   }
 }
 
+function getPresenceSessionId() {
+  try {
+    const existing = window.sessionStorage.getItem(PRESENCE_SESSION_KEY);
+    if (existing) {
+      return existing;
+    }
+
+    const nextId =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `presence_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+
+    window.sessionStorage.setItem(PRESENCE_SESSION_KEY, nextId);
+    return nextId;
+  } catch {
+    return `presence_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  }
+}
+
 export default function useSiteState() {
   const [state, setState] = useState(readInitialState);
   const [viewerId, setViewerId] = useState('');
@@ -115,6 +133,7 @@ export default function useSiteState() {
   const applyingRemoteRef = useRef(false);
   const lastSerializedRef = useRef('');
   const firebaseRefRef = useRef(null);
+  const presenceSessionIdRef = useRef(getPresenceSessionId());
 
   useEffect(() => {
     const normalized = normalizeState(state);
@@ -179,14 +198,17 @@ export default function useSiteState() {
       });
 
       connectedRef = services.database.ref('.info/connected');
-      presenceRef = services.database.ref(`onlineUsers/${services.uid || 'guest'}`);
+      presenceRef = services.database.ref(`onlineUsers/${presenceSessionIdRef.current}`);
       connectedRef.on('value', (snapshot) => {
         if (detached || snapshot.val() !== true || !presenceRef) {
           return;
         }
 
         presenceRef.onDisconnect().remove();
-        presenceRef.set(true);
+        presenceRef.set({
+          uid: services.uid || 'guest',
+          connectedAt: window.firebase?.database?.ServerValue?.TIMESTAMP || Date.now(),
+        });
       });
     });
 
