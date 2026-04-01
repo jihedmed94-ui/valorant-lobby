@@ -2,6 +2,12 @@ export default function HeroSection({ stats, onExplore, onCreate }) {
   return (
     <section className="hero">
       <div className="hero-copy hero-copy-wide">
+        <div className="brand" style={{ marginBottom: 24 }}>
+          <span className="brand-mark">V</span>
+          <span className="brand-copy">
+            VALORANT <b>LOBBY</b><em>TN</em>
+          </span>
+        </div>
         <p className="eyebrow">Tunisia&apos;s tactical queue board</p>
         <h1>
           BUILD YOUR <span className="val-text">VALORANT</span> TEAM FAST
