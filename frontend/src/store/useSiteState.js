@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { defaultAnnouncements, defaultArchive, defaultLobbies, defaultReports, defaultRequests, defaultTeams, defaultTournament } from '../lib/mockData';
 import { bootstrapFirebaseServices } from '../lib/firebase';
 
-const STORAGE_KEY = 'valorant-react-site-state-v2';
-const FIREBASE_STATE_PATH = 'siteStateV2';
+const STORAGE_KEY = 'valorant-react-site-state-v3';
+const FIREBASE_STATE_PATH = 'siteStateV3';
+
 
 function buildDefaultState() {
   return {
