@@ -1,5 +1,20 @@
-﻿import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import discordIcon from '../../assets/discord.png';
+
+function BrandLogo() {
+  return (
+    <svg className="brand-logo" viewBox="0 0 64 64" aria-hidden="true">
+      <defs>
+        <linearGradient id="brandAccent" x1="8" x2="56" y1="8" y2="56" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#ff4655" />
+          <stop offset="1" stopColor="#ff7f6b" />
+        </linearGradient>
+      </defs>
+      <path fill="url(#brandAccent)" d="M15 10h14l3 19 3-19h14L37 54H27L15 10Z" />
+      <path fill="rgba(255,255,255,0.18)" d="M26 15h12l-2 10h-8l-2-10Zm3 16h6l-3 16-3-16Z" />
+    </svg>
+  );
+}
 
 function InboxIcon() {
   return (
@@ -16,7 +31,9 @@ export default function SiteHeader({ pendingRequests }) {
   return (
     <header className="site-header">
       <Link className="brand" to="/">
-        <span className="brand-mark">V</span>
+        <span className="brand-mark">
+          <BrandLogo />
+        </span>
         <span className="brand-copy">
           VALORANT <b>LOBBY</b><em>TN</em>
         </span>
