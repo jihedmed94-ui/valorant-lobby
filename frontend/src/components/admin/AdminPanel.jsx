@@ -681,4 +681,3 @@ export default function AdminPanel({ state, setState, onLock }) {
     </section>
   );
 }
-
