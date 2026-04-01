@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { defaultAnnouncements, defaultArchive, defaultLobbies, defaultReports, defaultRequests, defaultTeams, defaultTournament } from '../lib/mockData';
 import { bootstrapFirebaseServices } from '../lib/firebase';
 
@@ -17,6 +17,42 @@ function buildDefaultState() {
     reports: defaultReports,
     livePlayers: 1,
   };
+}
+
+function createStableId(prefix, value, index) {
+  const normalized = String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return normalized ? `${prefix}-${normalized}` : `${prefix}-${index + 1}`;
+}
+
+function normalizeTeam(team, index) {
+  if (!team || typeof team !== 'object') {
+    return null;
+  }
+
+  return {
+    ...team,
+    id: team.id || createStableId('team', `${team.name || ''}-${team.tag || ''}-${team.contact || ''}`, index),
+    name: String(team.name || '').trim(),
+    tag: String(team.tag || '').trim(),
+    lookingFor: String(team.lookingFor || '').trim(),
+    contact: String(team.contact || '').trim(),
+    description: String(team.description || '').trim(),
+    verified: Boolean(team.verified),
+    pro: Boolean(team.pro),
+  };
+}
+
+function normalizeTeams(teams, defaults) {
+  if (!Array.isArray(teams)) {
+    return defaults;
+  }
+
+  return teams.map((team, index) => normalizeTeam(team, index)).filter(Boolean);
 }
 
 function normalizeState(savedState) {
@@ -39,7 +75,7 @@ function normalizeState(savedState) {
     ...savedState,
     tournament,
     lobbies: Array.isArray(savedState?.lobbies) ? savedState.lobbies : defaults.lobbies,
-    teams: Array.isArray(savedState?.teams) ? savedState.teams : defaults.teams,
+    teams: normalizeTeams(savedState?.teams, defaults.teams),
     announcements: Array.isArray(savedState?.announcements) ? savedState.announcements : defaults.announcements,
     archive: Array.isArray(savedState?.archive) ? savedState.archive : defaults.archive,
     reports: Array.isArray(savedState?.reports) ? savedState.reports : defaults.reports,
