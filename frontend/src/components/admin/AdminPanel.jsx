@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const ANNOUNCEMENT_CATEGORIES = ['Tournament', 'Community', 'Live', 'Alert'];
 const TOURNAMENT_STATUSES = ['OPEN', 'LIVE', 'CLOSED', 'HIDDEN'];
@@ -49,6 +49,12 @@ function buildHiddenTournamentSnapshot(tournament, reason) {
     createdAt: tournament?.createdAt || Date.now(),
     updatedAt: Date.now(),
   };
+}
+
+function buildTeamFingerprint(team) {
+  return [team?.id, team?.name, team?.tag, team?.contact]
+    .map((value) => String(value || '').trim().toLowerCase())
+    .join('::');
 }
 
 export default function AdminPanel({ state, setState, onLock }) {
@@ -249,10 +255,12 @@ export default function AdminPanel({ state, setState, onLock }) {
     }));
   };
 
-  const handleDeleteTeam = (teamId) => {
+  const handleDeleteTeam = (teamToDelete) => {
+    const targetFingerprint = buildTeamFingerprint(teamToDelete);
+
     setState((current) => ({
       ...current,
-      teams: current.teams.filter((team) => team.id !== teamId),
+      teams: current.teams.filter((team) => buildTeamFingerprint(team) !== targetFingerprint),
     }));
 
     setToast('TEAM DELETED');
@@ -586,7 +594,7 @@ export default function AdminPanel({ state, setState, onLock }) {
                   <strong>{team.name}</strong>
                   <p>{team.tag} / {team.lookingFor}</p>
                 </div>
-                <button className="admin-icon-btn danger" type="button" onClick={() => handleDeleteTeam(team.id)}>
+                <button className="admin-icon-btn danger" type="button" onClick={() => handleDeleteTeam(team)}>
                   ×
                 </button>
               </div>
