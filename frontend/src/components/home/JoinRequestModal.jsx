@@ -1,4 +1,5 @@
-﻿import Modal from '../common/Modal';
+import Modal from '../common/Modal';
+import { RANKS } from '../../lib/constants';
 
 export default function JoinRequestModal({ isOpen, onClose, form, onChange, onSubmit, lobbyName, error }) {
   return (
@@ -11,7 +12,14 @@ export default function JoinRequestModal({ isOpen, onClose, form, onChange, onSu
       <div className="row">
         <div className="field">
           <label htmlFor="joinRequestRank">RANK</label>
-          <input id="joinRequestRank" name="rank" value={form.rank} onChange={onChange} type="text" placeholder="Diamond" />
+          <select id="joinRequestRank" name="rank" value={form.rank} onChange={onChange}>
+            <option value="">SELECT RANK</option>
+            {RANKS.map((rank) => (
+              <option key={rank} value={rank}>
+                {rank}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="field">
           <label htmlFor="joinRequestContact">CONTACT</label>
