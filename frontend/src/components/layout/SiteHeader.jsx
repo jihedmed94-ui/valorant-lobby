@@ -5,7 +5,7 @@ function BrandLogo() {
   return (
     <svg className="brand-logo" viewBox="0 0 64 64" aria-hidden="true">
       <defs>
-        <linearGradient id="brandAccent" x1="8" x2="56" y1="8" y2="56">
+        <linearGradient id="brandAccent" x1="8" x2="56" y1="8" y2="56" gradientUnits="userSpaceOnUse">
           <stop stopColor="#ff4655" />
           <stop offset="1" stopColor="#ff7f6b" />
         </linearGradient>
@@ -27,10 +27,7 @@ function InboxIcon() {
   );
 }
 
-export default function SiteHeader({ pendingRequests = 0 }) {
-  const hasPending = pendingRequests > 0;
-  const displayCount = pendingRequests > 99 ? '99+' : pendingRequests;
-
+export default function SiteHeader({ pendingRequests }) {
   return (
     <header className="site-header">
       <Link className="brand" to="/">
@@ -41,24 +38,13 @@ export default function SiteHeader({ pendingRequests = 0 }) {
           VALORANT <b>LOBBY</b><em>TN</em>
         </span>
       </Link>
-
       <nav className="site-nav">
-        <Link
-          to="/?inbox=1"
-          aria-label={`Inbox with ${pendingRequests} pending requests`}
-          className={`community-btn nav-with-badge ${hasPending ? 'inbox-alert' : ''}`}
-        >
+        <Link className={`community-btn nav-with-badge ${pendingRequests ? 'inbox-alert' : ''}`} to="/?inbox=1">
           <InboxIcon />
           INBOX
-          {hasPending && <span className="nav-badge">{displayCount}</span>}
+          {pendingRequests ? <span className="nav-badge">{pendingRequests}</span> : null}
         </Link>
-
-        <a
-          href="https://discord.gg/stRq5y2pdz"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="community-btn discord-btn"
-        >
+        <a href="https://discord.gg/stRq5y2pdz" target="_blank" rel="noreferrer" className="community-btn">
           <img src={discordIcon} alt="" className="community-icon" />
           JOIN OUR COMMUNITY
         </a>
